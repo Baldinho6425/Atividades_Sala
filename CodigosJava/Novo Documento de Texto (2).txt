@@ -1,0 +1,165 @@
+package cienciasComput;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+
+class Professor {
+    private int codigo;
+    private String nome;
+    private ArrayList<Disciplina> disciplinas;
+
+    public Professor(int codigo, String nome) {
+        this.codigo = codigo;
+        this.nome = nome;
+        this.disciplinas = new ArrayList<>();
+    }
+
+    public void adicionarDisciplina(Disciplina disciplina) {
+        disciplinas.add(disciplina);
+    }
+
+    public void listarDisciplinas() {
+        for (Disciplina disciplina : disciplinas) {
+            System.out.println("Código da disciplina: " + disciplina.getCodigo());
+            System.out.println("Nome da disciplina: " + disciplina.getNome());
+            System.out.println("Fase: " + disciplina.getFase());
+            System.out.println("Carga horária: " + disciplina.getCargaHoraria() + " horas\n");
+        }
+    }
+    
+    public void salvarEmArquivo(BufferedWriter writer) throws IOException {
+        writer.write("Código do professor: " + codigo + "\n");
+        writer.write("Nome do professor: " + nome + "\n");
+        writer.write("Disciplinas:\n");
+        for (Disciplina disciplina : disciplinas) {
+            writer.write("Código da disciplina: " + disciplina.getCodigo() + "\n");
+            writer.write("Nome da disciplina: " + disciplina.getNome() + "\n");
+            writer.write("Fase: " + disciplina.getFase() + "\n");
+            writer.write("Carga horária: " + disciplina.getCargaHoraria() + " horas\n");
+        }
+        writer.write("Carga horária total: " + somaCarga() + " horas\n\n");
+    }
+
+    public int somaCarga() {
+        int cargaTotal = 0;
+        for (Disciplina disciplina : disciplinas) {
+            cargaTotal += disciplina.getCargaHoraria();
+        }
+        return cargaTotal;
+    }
+
+    public int getCodigo() {
+        return codigo;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+}
+===================================================================================================
+package cienciasComput;
+
+class Disciplina {
+    private int codigo;
+    private String nome;
+    private int fase;
+    private int cargaHoraria;
+
+    public Disciplina(int codigo, String nome, int fase, int cargaHoraria) {
+        this.codigo = codigo;
+        this.nome = nome;
+        this.fase = fase;
+        this.cargaHoraria = cargaHoraria;
+    }
+
+    public int getCodigo() {
+        return codigo;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public int getFase() {
+        return fase;
+    }
+
+    public int getCargaHoraria() {
+        return cargaHoraria;
+    }
+}
+=================================================================================================
+package cienciasComput;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Principal {
+	public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Informe o nome do arquivo para salvar os dados: ");
+        String nomeArquivo = scanner.nextLine();
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeArquivo))) {
+            System.out.print("Quantos professores tem no curso? ");
+            int numProfessores = scanner.nextInt();
+            scanner.nextLine();
+
+            ArrayList<Professor> professores = new ArrayList<>();
+
+            for (int i = 0; i < numProfessores; i++) {
+                System.out.println("\nCadastro do Professor " + (i + 1));
+                System.out.print("Código do professor: ");
+                int codigoProfessor = scanner.nextInt();
+                scanner.nextLine();
+                System.out.print("Nome do professor: ");
+                String nomeProfessor = scanner.nextLine();
+
+                Professor professor = new Professor(codigoProfessor, nomeProfessor);
+
+                System.out.print("Quantas disciplinas o professor tem no semestre? ");
+                int numDisciplinas = scanner.nextInt();
+
+                for (int j = 0; j < numDisciplinas; j++) {
+                    System.out.println("\nCadastro da Disciplina " + (j + 1));
+                    System.out.print("Código da disciplina: ");
+                    int codigoDisciplina = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Nome da disciplina: ");
+                    String nomeDisciplina = scanner.nextLine();
+                    System.out.print("Fase: ");
+                    int fase = scanner.nextInt();
+                    System.out.print("Carga horária: ");
+                    int cargaHoraria = scanner.nextInt();
+
+                    Disciplina disciplina = new Disciplina(codigoDisciplina, nomeDisciplina, fase, cargaHoraria);
+                    professor.adicionarDisciplina(disciplina);
+                }
+
+                professores.add(professor);
+            }
+
+            System.out.println("\nLista de Professores e Suas Disciplinas:");
+
+            for (Professor professor : professores) {
+                System.out.println("\nCódigo do professor: " + professor.getCodigo());
+                System.out.println("Nome do professor: " + professor.getNome());
+                System.out.println("Disciplinas:");
+                professor.listarDisciplinas();
+                System.out.println("Carga horária total: " + professor.somaCarga() + " horas\n");
+                professor.salvarEmArquivo(writer); 
+            }
+
+            System.out.println("Dados salvos com sucesso no arquivo: " + nomeArquivo);
+        } catch (IOException e) {
+            System.err.println("Erro ao escrever no arquivo: " + e.getMessage());
+        } finally {
+            scanner.close();
+        }
+    }
+}
