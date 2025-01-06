@@ -12,7 +12,7 @@ Bem-vindo(a) ao meu repositório de **atividades realizadas em sala de aula**! �
 ---
 
 ## 🛠️ Tecnologias e áreas abordadas:  
-- **Linguagens:** Java, Python, C, entre outras.  
+- **Linguagens:** Java, Python, entre outras.  
 - **Tópicos:** Estruturas de dados, algoritmos, programação orientada a objetos, entre outros.  
 
 ---
